@@ -1,0 +1,7 @@
+out
+.vs
+*.gdextension
+*.dll
+
+# Godot 4+ specific ignores
+.godot/
