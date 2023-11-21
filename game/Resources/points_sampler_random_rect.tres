@@ -1,0 +1,4 @@
+[gd_resource type="PointsSamplerRectData" format=3 uid="uid://dd7i5etje18yo"]
+
+[resource]
+dimensions = Vector2(3, 3)

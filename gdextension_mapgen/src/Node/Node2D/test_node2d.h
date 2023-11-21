@@ -1,5 +1,5 @@
-#ifndef GDEXTENSIONTEST_TEST_NODE2D_HPP
-#define GDEXTENSIONTEST_TEST_NODE2D_HPP
+#ifndef NODE_NODE2D_TEST_NODE2D
+#define NODE_NODE2D_TEST_NODE2D
 
 #include <godot_cpp/variant/string.hpp>
 #include <godot_cpp/classes/node2d.hpp>
@@ -27,4 +27,4 @@ namespace gfck_mapgen
 
 } // namespace GDExtensionTest
 
-#endif // GDEXTENSIONTEST_TEST_NODE2D_HPP
+#endif

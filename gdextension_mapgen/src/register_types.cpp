@@ -4,7 +4,11 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "Node/2D/test_node2d.h"
+#include "Node/map_generator.h"
+#include "Node/Node2D/test_node2d.h"
+
+#include "Resource/PointsSampler/points_sampler_data.h"
+#include "Resource/PointsSampler/points_sampler_rect_data.h"
 
 // This function will be called to initialize types and other things the extension provides.
 // It can be called multiple times, since the only the minimum initialization level is provided (see below the main entry point.)
@@ -17,6 +21,11 @@ void initializer(godot::ModuleInitializationLevel p_level)
     {
         // Handle initialization, register our test class to the engine.
         godot::ClassDB::register_class<gfck_mapgen::TestNode2D>();
+
+       
+        godot::ClassDB::register_class<mapgen::MapGenerator>();
+        godot::ClassDB::register_class<mapgen::IPointsSamplerData>();
+        godot::ClassDB::register_class<mapgen::PointsSamplerRectData>();
     }
 }
 

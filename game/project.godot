@@ -11,6 +11,6 @@ config_version=5
 [application]
 
 config/name="gfck-colonies"
-run/main_scene="res://test_scene.tscn"
+run/main_scene="res://Scenes2D/pointsampler.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
