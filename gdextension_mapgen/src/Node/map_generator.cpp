@@ -3,6 +3,8 @@
 #include "../Generation/PointSampling/points_sampler_poisson_rect.h"
 #include "../Resource/PointsSampler/points_sampler_rect_data.h"
 
+#include "../Generation/Voronoi/voronoi_generator.h"
+
 #include "../Conversion/godot_to_std.h"
 
 using namespace godot;
@@ -20,9 +22,9 @@ namespace
 
 void MapGenerator::generate()
 {
-    mapData.sampledPoints = sample_points(*pointSamplerData);
+    mapData.SampledPoints = sample_points(*pointSamplerData);
 
-    mapData.voronoi.generate(to_std_vector(mapData.sampledPoints), 1, 1);
+    mapData.VoronoiDiagram = mapgen::voronoi::generation::generate(to_std_vector(mapData.SampledPoints), 1, 1);
 }
 
 void MapGenerator::set_points_sampler_data(const Ref<IPointsSamplerData>& data)
@@ -39,7 +41,7 @@ godot::PackedVector2Array mapgen::MapGenerator::get_voronoi_vertices() const
 {
     godot::PackedVector2Array output;
 
-    for (auto& v : mapData.voronoi.get_sites())
+    for (auto& v : mapData.VoronoiDiagram.GodotCellCenters)
         output.push_back(v);
 
     return output;
@@ -49,7 +51,7 @@ godot::Array mapgen::MapGenerator::get_voronoi_edges() const
 {
     godot::Array edges;
 
-    for (auto& edge : mapData.voronoi.get_edges())
+    for (auto& edge : mapData.VoronoiDiagram.GodotEdges)
         edges.push_back(edge);
 
     return edges;
@@ -59,7 +61,7 @@ godot::Array mapgen::MapGenerator::get_voronoi_cells() const
 {
     godot::Array cells;
 
-    for (auto& cell : mapData.voronoi.get_cells())
+    for (auto& cell : mapData.VoronoiDiagram.GodotCells)
     {
         godot::Array cell_vertices;
         for (auto& p : cell)
@@ -73,7 +75,7 @@ godot::Array mapgen::MapGenerator::get_voronoi_cells() const
 
 PackedVector2Array MapGenerator::get_sampled_points() const
 {
-    return mapData.sampledPoints;
+    return mapData.SampledPoints;
 }
 
 void MapGenerator::_bind_methods()

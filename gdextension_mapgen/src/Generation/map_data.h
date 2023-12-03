@@ -3,14 +3,14 @@
 
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 
-#include "../Generation/Voronoi/Voronoi.h"
+#include "../Generation/Voronoi/voronoi_data.h"
 
 namespace mapgen
 {
     struct MapData
     {
-        godot::PackedVector2Array sampledPoints;
-        Voronoi voronoi;
+        godot::PackedVector2Array SampledPoints;
+        voronoi::DiagramData      VoronoiDiagram;
     };
 } // namespace mapgen
 

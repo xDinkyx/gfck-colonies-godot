@@ -27,9 +27,8 @@ namespace mapgen
 
         // voronoi
         godot::PackedVector2Array get_voronoi_vertices() const;
-        godot::Array get_voronoi_edges() const;
-        godot::Array get_voronoi_cells() const;
-
+        godot::Array              get_voronoi_edges() const;
+        godot::Array              get_voronoi_cells() const;
 
       protected:
         static void _bind_methods();
