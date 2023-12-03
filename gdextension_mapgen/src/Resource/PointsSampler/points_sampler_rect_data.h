@@ -10,12 +10,9 @@ namespace mapgen
 {
 class PointsSamplerRectData : public IPointsSamplerData
 {
-  public:
     GDCLASS(PointsSamplerRectData, IPointsSamplerData)
 
-    void set_dimensions(const godot::Vector2 size);
-    godot::Vector2 get_dimensions() const;
-
+  public:
     void set_point_count(int count);
     int get_point_count() const;
 
