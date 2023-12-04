@@ -29,7 +29,7 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	Generator.generate()
+	Generator.generate(15)
 	
 	print(Generator.get_sampled_points().size())
 	print(Generator.get_voronoi_vertices().size())

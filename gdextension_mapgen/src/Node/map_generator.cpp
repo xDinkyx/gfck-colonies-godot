@@ -20,11 +20,13 @@ namespace
     }
 } // namespace
 
-void MapGenerator::generate()
+void MapGenerator::generate(int waterEdgeFlag)
 {
     mapData.SampledPoints = sample_points(*pointSamplerData);
 
     mapData.VoronoiDiagram = mapgen::voronoi::generation::generate(to_std_vector(mapData.SampledPoints), 1, 1);
+
+    mapData.Biomes = BiomeGenerator::generate(mapData.VoronoiDiagram, (BiomeGenerator::MapEdgeFlag)waterEdgeFlag);
 }
 
 void MapGenerator::set_points_sampler_data(const Ref<IPointsSamplerData>& data)
@@ -80,7 +82,7 @@ PackedVector2Array MapGenerator::get_sampled_points() const
 
 void MapGenerator::_bind_methods()
 {
-    ClassDB::bind_method(D_METHOD("generate"), &generate);
+    ClassDB::bind_method(D_METHOD("generate", "map_edge_water_flag"), &generate);
     ClassDB::bind_method(D_METHOD("get_sampled_points"), &get_sampled_points);
     ClassDB::bind_method(D_METHOD("get_voronoi_vertices"), &get_voronoi_vertices);
     ClassDB::bind_method(D_METHOD("get_voronoi_edges"), &get_voronoi_edges);

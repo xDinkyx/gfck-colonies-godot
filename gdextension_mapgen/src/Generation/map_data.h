@@ -4,6 +4,7 @@
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 
 #include "../Generation/Voronoi/voronoi_data.h"
+#include "../Generation/Biomes/biome_data.h"
 
 namespace mapgen
 {
@@ -11,6 +12,7 @@ namespace mapgen
     {
         godot::PackedVector2Array SampledPoints;
         voronoi::DiagramData      VoronoiDiagram;
+        std::vector<Biome>        Biomes;
     };
 } // namespace mapgen
 

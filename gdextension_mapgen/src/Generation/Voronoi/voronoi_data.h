@@ -4,10 +4,18 @@
 #include <memory>
 #include <vector>
 
-#include "cell.h"
+namespace godot
+{
+    struct Vector2;
+    struct Vector4;
+}
 
 namespace mapgen::voronoi
 {
+    struct Cell;
+    struct Edge;
+    struct Point;
+
     struct DiagramData
     {
         std::vector<std::unique_ptr<Cell>>  Cells;

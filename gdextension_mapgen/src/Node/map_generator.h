@@ -6,8 +6,10 @@
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 
-#include "../Generation/map_data.h"
 #include "../Resource/PointsSampler/points_sampler_data.h"
+#include "../Generation/map_data.h"
+#include "../Generation/Biomes/biome_type.h"
+#include "../Generation/Biomes/biome_generator.h"
 
 namespace mapgen
 {
@@ -17,7 +19,7 @@ namespace mapgen
         GDCLASS(MapGenerator, godot::Node)
 
         // generation
-        void generate();
+        void generate(int waterGenFlag);
 
         // point sampler
         void                      set_points_sampler_data(const godot::Ref<IPointsSamplerData>& data);

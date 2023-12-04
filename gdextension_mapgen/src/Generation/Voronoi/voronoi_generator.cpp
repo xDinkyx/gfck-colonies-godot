@@ -3,6 +3,8 @@
 
 #include "jc_voronoi.h"
 
+#include "cell.h"
+
 #include <algorithm>
 
 namespace
