@@ -31,8 +31,7 @@ extends Node2D
 func _ready():
 	Generator.generate(15)
 	
-	print(Generator.get_sampled_points().size())
-	print(Generator.get_voronoi_vertices().size())
+	print(Generator.get_voronoi_cells().size())
 	
 	_center_on_screen()
 

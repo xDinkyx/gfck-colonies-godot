@@ -7,8 +7,8 @@
 
 #include "jc_voronoi.h"
 
-#include "voronoi_data.h"
 #include "cell.h"
+#include "voronoi_data.h"
 
 namespace
 {
@@ -109,10 +109,11 @@ namespace
     auto find_point(godot::Vector2 pos, const std::vector<std::unique_ptr<mapgen::voronoi::Point>>& points)
     {
         using namespace mapgen::voronoi;
-        constexpr float epsilon = std::numeric_limits<float>::epsilon();
+        constexpr float epsilon = 0.0000005; // Seems accurate enough, some asserts to catch if it happens to be too big or small.
 
-        auto point = std::find_if(std::begin(points), std::end(points),
-                                  [pos, epsilon](const std::unique_ptr<Point>& p) { return (p->Position - pos).length_squared() <= epsilon; });
+        auto point = std::find_if(std::begin(points), std::end(points), [pos, epsilon](const std::unique_ptr<Point>& p) {
+            return abs(p->Position.x - pos.x) <= epsilon && abs(p->Position.y - pos.y) <= epsilon;
+        });
         return point == std::end(points) ? nullptr : (*point).get();
     }
 
@@ -155,8 +156,7 @@ namespace
         return point;
     }
 
-    auto add_or_create_cell_edge(const std::unique_ptr<mapgen::voronoi::Cell>& cell, const jcv_edge* siteEdge,
-                                 mapgen::voronoi::DiagramData& diagramData)
+    auto add_or_create_cell_edge(const std::unique_ptr<mapgen::voronoi::Cell>& cell, const jcv_edge* siteEdge, mapgen::voronoi::DiagramData& diagramData)
     {
         using namespace mapgen::voronoi;
         using namespace mapgen::voronoi::converter;
@@ -172,6 +172,8 @@ namespace
 
             auto point1 = get_or_create_point(pos1, diagramData);
             auto point2 = get_or_create_point(pos2, diagramData);
+
+            assert(point1 != point2);
 
             // Update edge
             new_edge->Cell1  = cell.get();
@@ -262,8 +264,14 @@ mapgen::voronoi::DiagramData mapgen::voronoi::converter::extract_data(const jcv_
     for (auto& site : site_data)
         data.Cells.emplace_back(create_cell(*site, data));
 
-    for (auto& cell : data.Cells)
-        assert(cell->Edges.size() == cell->Points.size());
+#ifdef _DEBUG
+    for (const auto& point : data.Points)
+        if (point->Edges.size() < 2)
+            assert(point->Edges.size() >= 2);
+    for (const auto& cell : data.Cells)
+        if (cell->Edges.size() != cell->Points.size())
+            assert(cell->Edges.size() == cell->Points.size());
+#endif
 
     return data;
 }
