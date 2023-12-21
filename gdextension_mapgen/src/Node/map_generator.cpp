@@ -91,4 +91,13 @@ void MapGenerator::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_points_sampler_data"), &get_points_sampler_data);
     ClassDB::bind_method(D_METHOD("set_points_sampler_data", "points_sampler_data"), &set_points_sampler_data);
     ClassDB::add_property("MapGenerator", PropertyInfo(Variant::OBJECT, "points_sampler_data"), "set_points_sampler_data", "get_points_sampler_data");
+
+    ClassDB::bind_integer_constant(get_class_static(), "LAND", "LAND", Biome::LAND);
+    ClassDB::bind_integer_constant(get_class_static(), "WATER", "WATER", Biome::WATER);
+
+    ClassDB::bind_integer_constant(get_class_static(), "TOP_EDGE", "TOP_EDGE", BiomeGenerator::TOP_EDGE, true);
+    ClassDB::bind_integer_constant(get_class_static(), "RIGHT_EDGE", "RIGHT_EDGE", BiomeGenerator::RIGHT_EDGE, true);
+    ClassDB::bind_integer_constant(get_class_static(), "LEFT_EDGE", "LEFT_EDGE", BiomeGenerator::LEFT_EDGE, true);
+    ClassDB::bind_integer_constant(get_class_static(), "BOT_EDGE", "BOT_EDGE", BiomeGenerator::BOT_EDGE, true);
+    ClassDB::bind_integer_constant(get_class_static(), "ALL_EDGES", "ALL_EDGES", BiomeGenerator::ALL_EDGES, true);
 }
