@@ -271,6 +271,9 @@ mapgen::voronoi::DiagramData mapgen::voronoi::converter::extract_data(const jcv_
     for (const auto& cell : data.Cells)
         if (cell->Edges.size() != cell->Points.size())
             assert(cell->Edges.size() == cell->Points.size());
+    for (const auto& edge : data.Edges)
+        if (edge->Cell1 == nullptr)
+            assert(edge->Cell1 != nullptr);
 #endif
 
     return data;
