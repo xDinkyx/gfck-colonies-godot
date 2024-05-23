@@ -5,7 +5,7 @@
 #include <godot_cpp/godot.hpp>
 
 #include "Node/map_generator.h"
-#include "Node/Node2D/test_node2d.h"
+#include "Node/biome_ref.h"
 
 #include "Resource/PointsSampler/points_sampler_data.h"
 #include "Resource/PointsSampler/points_sampler_rect_data.h"
@@ -19,11 +19,8 @@ void initializer(godot::ModuleInitializationLevel p_level)
     // (like parent class missing if initialization is done in wrong level).
     if (p_level == godot::MODULE_INITIALIZATION_LEVEL_SCENE)
     {
-        // Handle initialization, register our test class to the engine.
-        godot::ClassDB::register_class<gfck_mapgen::TestNode2D>();
-
-       
         godot::ClassDB::register_class<mapgen::MapGenerator>();
+        godot::ClassDB::register_class<BiomeRef>();
         godot::ClassDB::register_class<mapgen::IPointsSamplerData>();
         godot::ClassDB::register_class<mapgen::PointsSamplerRectData>();
     }

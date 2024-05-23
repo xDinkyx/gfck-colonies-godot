@@ -4,3 +4,7 @@ out/
 .vs/
 
 gen/
+
+game/extensions/
+
+*.tmp

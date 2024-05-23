@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://byqhpea6ybp8l"]
+
+[ext_resource type="Script" path="res://Scenes2D/mappreview.gd" id="1_aamfu"]
+[ext_resource type="PointsSamplerRectData" uid="uid://dd7i5etje18yo" path="res://Resources/points_sampler_random_rect.tres" id="2_csdqe"]
+
+[node name="MapPreview" type="Node2D"]
+script = ExtResource("1_aamfu")
+size_factor = 600.0
+
+[node name="MapGenerator" type="MapGenerator" parent="."]
+points_sampler_data = ExtResource("2_csdqe")

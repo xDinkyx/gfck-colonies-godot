@@ -18,7 +18,7 @@ namespace mapgen
         }
 
         const voronoi::Cell* Cell = nullptr;
-        BiomeType                 Type = LAND;
+        BiomeType            Type = LAND;
     };
 } // namespace mapgen
 

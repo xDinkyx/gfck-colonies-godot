@@ -1,11 +1,13 @@
 #include "map_generator.h"
 
 #include "../Generation/PointSampling/points_sampler_poisson_rect.h"
-#include "../Resource/PointsSampler/points_sampler_rect_data.h"
-
 #include "../Generation/Voronoi/voronoi_generator.h"
 
+#include "../Resource/PointsSampler/points_sampler_rect_data.h"
+
 #include "../Conversion/godot_to_std.h"
+
+#include "biome_ref.h"
 
 using namespace godot;
 using namespace mapgen;
@@ -27,6 +29,19 @@ void MapGenerator::generate(int waterEdgeFlag)
     mapData.VoronoiDiagram = mapgen::voronoi::generation::generate(to_std_vector(mapData.SampledPoints), 1, 1);
 
     mapData.Biomes = BiomeGenerator::generate(mapData.VoronoiDiagram, (BiomeGenerator::MapEdgeFlag)waterEdgeFlag);
+
+    create_biome_refs();
+}
+
+void mapgen::MapGenerator::create_biome_refs()
+{
+    for(const auto& biome : mapData.Biomes)
+    {
+        Ref<BiomeRef> ref;
+        ref.instantiate();
+        ref->set_biome(&biome);
+        BiomeRefs.append(ref);
+    } 
 }
 
 void MapGenerator::set_points_sampler_data(const Ref<IPointsSamplerData>& data)
@@ -75,6 +90,11 @@ godot::Array mapgen::MapGenerator::get_voronoi_cells() const
     return cells;
 }
 
+godot::Array mapgen::MapGenerator::get_biomes() const
+{
+    return BiomeRefs;
+}
+
 PackedVector2Array MapGenerator::get_sampled_points() const
 {
     return mapData.SampledPoints;
@@ -87,13 +107,14 @@ void MapGenerator::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_voronoi_vertices"), &get_voronoi_vertices);
     ClassDB::bind_method(D_METHOD("get_voronoi_edges"), &get_voronoi_edges);
     ClassDB::bind_method(D_METHOD("get_voronoi_cells"), &get_voronoi_cells);
+    ClassDB::bind_method(D_METHOD("get_biomes"), &get_biomes);
 
     ClassDB::bind_method(D_METHOD("get_points_sampler_data"), &get_points_sampler_data);
     ClassDB::bind_method(D_METHOD("set_points_sampler_data", "points_sampler_data"), &set_points_sampler_data);
     ClassDB::add_property("MapGenerator", PropertyInfo(Variant::OBJECT, "points_sampler_data"), "set_points_sampler_data", "get_points_sampler_data");
 
-    ClassDB::bind_integer_constant(get_class_static(), "LAND", "LAND", Biome::LAND);
-    ClassDB::bind_integer_constant(get_class_static(), "WATER", "WATER", Biome::WATER);
+    //ClassDB::bind_integer_constant(get_class_static(), "LAND", "LAND", Biome::LAND);
+    //ClassDB::bind_integer_constant(get_class_static(), "WATER", "WATER", Biome::WATER);
 
     ClassDB::bind_integer_constant(get_class_static(), "TOP_EDGE", "TOP_EDGE", BiomeGenerator::TOP_EDGE, true);
     ClassDB::bind_integer_constant(get_class_static(), "RIGHT_EDGE", "RIGHT_EDGE", BiomeGenerator::RIGHT_EDGE, true);

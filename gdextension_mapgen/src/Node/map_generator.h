@@ -32,15 +32,23 @@ namespace mapgen
         godot::Array              get_voronoi_edges() const;
         godot::Array              get_voronoi_cells() const;
 
+        // biomes
+        godot::Array get_biomes() const;
+
       protected:
         static void _bind_methods();
 
       private:
+        void create_biome_refs();
+
         // input
         godot::Ref<IPointsSamplerData> pointSamplerData;
 
         // output
         MapData mapData;
+
+        // godot interface
+        godot::Array BiomeRefs;
     };
 
 } // namespace mapgen

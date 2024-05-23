@@ -199,8 +199,8 @@ namespace
         else // Edge already exists, and is being looped over by different cell.
         {
             // Update cell
-            add_point_to_cell(cell.get(), edge->Point1);
             add_point_to_cell(cell.get(), edge->Point2);
+            add_point_to_cell(cell.get(), edge->Point1);
             add_edge_to_cell(cell.get(), edge);
 
             // Update edge
@@ -215,6 +215,26 @@ namespace
         return edge;
     }
 
+    auto get_non_equal_point_from_edge(const mapgen::voronoi::Edge* edge, const mapgen::voronoi::Point* point)
+    {
+        if (edge->Point1 == point)
+            return edge->Point2;
+        return edge->Point1;
+    }
+
+    auto get_ordered_cell_points(mapgen::voronoi::Cell* cell)
+    {
+        assert(!cell->Points.empty());
+
+        std::vector<mapgen::voronoi::Point*> ordered_points{cell->Points[0]};
+
+        for (const auto& edge : cell->Edges)
+            ordered_points.emplace_back(get_non_equal_point_from_edge(edge, ordered_points.back()));
+        ordered_points.pop_back();
+
+        return ordered_points;
+    }
+
     auto create_cell(const SiteData& site, mapgen::voronoi::DiagramData& diagramData)
     {
         using namespace mapgen::voronoi;
@@ -225,6 +245,8 @@ namespace
 
         for (auto& site_edge : site.edges)
             add_or_create_cell_edge(cell, site_edge, diagramData);
+
+       cell->Points = get_ordered_cell_points(cell.get());
 
         return cell;
     }
@@ -259,6 +281,7 @@ jcv_point_ mapgen::voronoi::converter::to_jcv_point(const godot::Vector2& v)
 mapgen::voronoi::DiagramData mapgen::voronoi::converter::extract_data(const jcv_diagram_& jcv_diagram)
 {
     DiagramData data;
+
 
     auto site_data = extract_site_data(jcv_diagram);
     for (auto& site : site_data)

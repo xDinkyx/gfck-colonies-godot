@@ -30,32 +30,61 @@ namespace
         return point != std::end(cell.Points);
     }
 
-    void set_biomes_with_point_at_xpos_type(std::vector<mapgen::Biome>& biomes, float xPos, mapgen::Biome::BiomeType type)
+    auto get_biomes_with_point_at_xpos(std::vector<mapgen::Biome>& biomes, float xPos)
     {
+        std::vector<mapgen::Biome*> result;
         for (auto& biome : biomes)
             if (has_point_at_x(*biome.Cell, xPos))
-                biome.Type = type;
+                result.emplace_back(&biome);
+        return result;
     }
 
-    auto set_biomes_with_point_at_ypos_type(std::vector<mapgen::Biome>& biomes, float yPos, mapgen::Biome::BiomeType type)
+    auto get_biomes_with_point_at_ypos(std::vector<mapgen::Biome>& biomes, float yPos)
     {
+        std::vector<mapgen::Biome*> result;
         for (auto& biome : biomes)
             if (has_point_at_y(*biome.Cell, yPos))
-                biome.Type = type;
+                result.emplace_back(&biome);
+        return result;
+    }
+
+    bool is_at_edge(const mapgen::Biome& biome)
+    {
+        for(const auto& edge : biome.Cell->Edges)
+            if (edge->Cell1 == nullptr || edge->Cell2 == nullptr)
+                return true;
+        return false;
+    }
+
+    auto get_edge_biomes(std::vector<mapgen::Biome>& biomes)
+    {
+        std::vector<mapgen::Biome*> edge_biomes;
+        for(auto& biome : biomes)
+            if (is_at_edge(biome))
+                edge_biomes.emplace_back(&biome);
+        return edge_biomes;
     }
 
     void set_edge_biomes_type(std::vector<mapgen::Biome>& biomes, mapgen::BiomeGenerator::MapEdgeFlag edgeFlag, mapgen::Biome::BiomeType type)
     {
         using namespace mapgen;
 
-        if (edgeFlag & BiomeGenerator::TOP_EDGE)
-            set_biomes_with_point_at_ypos_type(biomes, 0.f, type);
-        if (edgeFlag & BiomeGenerator::BOT_EDGE)
-            set_biomes_with_point_at_ypos_type(biomes, 1.f, type);
-        if (edgeFlag & BiomeGenerator::LEFT_EDGE)
-            set_biomes_with_point_at_xpos_type(biomes, 0.f, type);
-        if (edgeFlag & BiomeGenerator::RIGHT_EDGE)
-            set_biomes_with_point_at_xpos_type(biomes, 1.f, type);
+        for (auto* biome : get_edge_biomes(biomes))
+            biome->Type = Biome::WATER;
+
+
+        //if (edgeFlag & BiomeGenerator::TOP_EDGE)
+        //    for (auto& biome : get_biomes_with_point_at_ypos(biomes, 0.f))
+        //        biome.Type = Biome::WATER;
+        //if (edgeFlag & BiomeGenerator::BOT_EDGE)
+        //    for (auto& biome : get_biomes_with_point_at_ypos(biomes, 1.f))
+        //        biome.Type = Biome::WATER;
+        //if (edgeFlag & BiomeGenerator::LEFT_EDGE)
+        //    for (auto& biome : get_biomes_with_point_at_xpos(biomes, 0.f))
+        //        biome.Type = Biome::WATER;
+        //if (edgeFlag & BiomeGenerator::RIGHT_EDGE)
+        //    for ( auto& biome : get_biomes_with_point_at_xpos(biomes, 1.f))
+        //        biome.Type = Biome::WATER;
     }
 } // namespace
 

@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcs3t81gf6drs"]
+
+[ext_resource type="Script" path="res://Scenes2D/biome_preview.gd" id="1_xntcp"]
+
+[node name="BiomePreview" type="Node2D"]
+z_index = -1
+scale = Vector2(500, 500)
+script = ExtResource("1_xntcp")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.384314, 0.764706, 0.329412, 1)
+polygon = PackedVector2Array(0.324, 0.352, 0.252, 0.78, 0.668, 0.91, 0.916, 0.736, 0.94, 0.454, 0.634, 0.326)
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(0.326, 0.364, 0.256, 0.782, 0.666, 0.91, 0.914, 0.74, 0.944, 0.452, 0.634343, 0.323232)
+width = 0.003
