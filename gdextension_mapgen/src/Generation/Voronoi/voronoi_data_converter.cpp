@@ -222,11 +222,26 @@ namespace
         return edge->Point1;
     }
 
+    mapgen::voronoi::Point* get_shared_point(const mapgen::voronoi::Edge* edge1, const mapgen::voronoi::Edge* edge2)
+    {
+        if (edge1->Point1 == edge2->Point1 
+         || edge1->Point1 == edge2->Point2)
+            return edge1->Point1;
+
+        if (edge1->Point2 == edge2->Point1 
+         || edge1->Point2 == edge2->Point2);
+            return edge1->Point2;
+
+        return nullptr;
+    }
+
     auto get_ordered_cell_points(mapgen::voronoi::Cell* cell)
     {
         assert(!cell->Points.empty());
+        assert(cell->Edges.size() > 1);
 
-        std::vector<mapgen::voronoi::Point*> ordered_points{cell->Points[0]};
+        mapgen::voronoi::Point* first_point  = get_non_equal_point_from_edge(cell->Edges[0], get_shared_point(cell->Edges[0], cell->Edges[1]));
+        std::vector<mapgen::voronoi::Point*> ordered_points{first_point};
 
         for (const auto& edge : cell->Edges)
             ordered_points.emplace_back(get_non_equal_point_from_edge(edge, ordered_points.back()));
