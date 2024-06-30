@@ -26,7 +26,7 @@ func _ready():
 	elif (biome_ref.get_biome_type() == 1):
 		$Polygon2D.color = water_color
 	
-	$Line2D.default_color = Color.from_hsv(randf_range(0.0, 6.0), 1.0, 1.0)
+	$Line2D.default_color = Color.from_hsv(randf_range(0.0, 6.0), 1.0, randf_range(0.55, 1.0))
 	$Line2D.width = edge_width
 	_updateLine()
 	

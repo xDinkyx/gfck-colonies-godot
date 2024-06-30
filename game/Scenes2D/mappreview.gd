@@ -59,6 +59,8 @@ func _draw():
 
 
 func _center_on_screen():
+	if(!is_inside_tree()):
+		return
 	var screen_center = get_viewport_rect().size / 2
 	position = screen_center - Vector2.ONE * size_factor / 2
 

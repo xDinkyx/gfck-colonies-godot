@@ -6,6 +6,8 @@
 z_index = -1
 scale = Vector2(500, 500)
 script = ExtResource("1_xntcp")
+edge_width = 0.003
+edge_internal_offset = 0.003
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 color = Color(0.384314, 0.764706, 0.329412, 1)
