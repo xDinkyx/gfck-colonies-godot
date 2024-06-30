@@ -15,6 +15,9 @@ AlignAfterOpenBracket: Align
 AlignOperands: Align
 AlignConsecutiveDeclarations: true
 AlignConsecutiveAssignments: true
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
 
 
 #AccessModifierOffset: -1
