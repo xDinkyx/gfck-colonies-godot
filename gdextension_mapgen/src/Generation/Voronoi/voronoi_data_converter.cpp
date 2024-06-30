@@ -9,17 +9,18 @@
 
 #include "cell.h"
 #include "voronoi_data.h"
+#include <iostream>
 
 namespace
 {
     struct EdgeData
     {
-        const jcv_edge* jcv_edge;
+        const jcv_edge* jcv_edge = nullptr;
     };
     struct SiteData
     {
         std::vector<const jcv_edge*> edges;
-        const jcv_site*              jcv_site;
+        const jcv_site*              jcv_site = nullptr;
     };
 
     auto extract_site_data(const jcv_diagram_& diagram)
@@ -117,9 +118,10 @@ namespace
         return point == std::end(points) ? nullptr : (*point).get();
     }
 
-    bool equals(const mapgen::voronoi::Edge& edge, const mapgen::voronoi::Edge& edge2)
+    bool equals(const godot::Vector2& p1, const godot::Vector2& p2)
     {
-        // return edge.
+        constexpr float epsilon     = 0.0000005; // Seems accurate enough, some asserts to catch if it happens to be too big or small.
+        return std::abs(p1.x - p2.x) <= epsilon && std::abs(p1.y - p2.y) <= epsilon;
     }
 
     auto find_edge(godot::Vector2 edgeP1, godot::Vector2 edgeP2, const std::vector<std::unique_ptr<mapgen::voronoi::Edge>>& edges)
@@ -129,9 +131,9 @@ namespace
         auto point = std::find_if(std::begin(edges), std::end(edges), [edgeP1, edgeP2](const std::unique_ptr<Edge>& e) {
             if (e->Point1 == nullptr || e->Point2 == nullptr)
                 return false;
-            if (e->Point1->Position == edgeP1 && e->Point2->Position == edgeP2)
+            if (equals(e->Point1->Position, edgeP1) && equals(e->Point2->Position, edgeP2))
                 return true;
-            if (e->Point2->Position == edgeP1 && e->Point1->Position == edgeP2)
+            if (equals(e->Point2->Position, edgeP1) && equals(e->Point1->Position, edgeP2))
                 return true;
             return false;
         });
@@ -165,7 +167,7 @@ namespace
         godot::Vector2 pos2 = to_godot_vector2(siteEdge->pos[1]);
 
         auto edge = find_edge(pos1, pos2, diagramData.Edges);
-        if (edge == nullptr)
+        if (edge == nullptr) // No edge exists for these points.
         {
             auto new_edge = std::make_unique<Edge>();
             edge          = new_edge.get();
@@ -204,6 +206,7 @@ namespace
             add_edge_to_cell(cell.get(), edge);
 
             // Update edge
+            assert(edge->Cell1 != nullptr);
             assert(edge->Cell2 == nullptr);
             edge->Cell2 = cell.get();
 
@@ -224,13 +227,12 @@ namespace
 
     mapgen::voronoi::Point* get_shared_point(const mapgen::voronoi::Edge* edge1, const mapgen::voronoi::Edge* edge2)
     {
-        if (edge1->Point1 == edge2->Point1 
-         || edge1->Point1 == edge2->Point2)
+        if (edge1->Point1 == edge2->Point1 || edge1->Point1 == edge2->Point2)
             return edge1->Point1;
 
-        if (edge1->Point2 == edge2->Point1 
-         || edge1->Point2 == edge2->Point2);
-            return edge1->Point2;
+        if (edge1->Point2 == edge2->Point1 || edge1->Point2 == edge2->Point2)
+            ;
+        return edge1->Point2;
 
         return nullptr;
     }
@@ -240,7 +242,7 @@ namespace
         assert(!cell->Points.empty());
         assert(cell->Edges.size() > 1);
 
-        mapgen::voronoi::Point* first_point  = get_non_equal_point_from_edge(cell->Edges[0], get_shared_point(cell->Edges[0], cell->Edges[1]));
+        mapgen::voronoi::Point*              first_point = get_non_equal_point_from_edge(cell->Edges[0], get_shared_point(cell->Edges[0], cell->Edges[1]));
         std::vector<mapgen::voronoi::Point*> ordered_points{first_point};
 
         for (const auto& edge : cell->Edges)
@@ -261,9 +263,27 @@ namespace
         for (auto& site_edge : site.edges)
             add_or_create_cell_edge(cell, site_edge, diagramData);
 
-       cell->Points = get_ordered_cell_points(cell.get());
+        cell->Points = get_ordered_cell_points(cell.get());
 
         return cell;
+    }
+
+    auto get_neighboring_cell_from_edge(const mapgen::voronoi::Cell* cell, const mapgen::voronoi::Edge* edge)
+    {
+        if (edge->Cell1 == cell)
+            return edge->Cell2;
+
+        assert(edge->Cell2 == cell);
+        return edge->Cell1;
+    }
+
+    auto count_neighbors(const mapgen::voronoi::Cell* cell)
+    {
+        size_t count = 0;
+        for (const auto edge : cell->Edges)
+            if (get_neighboring_cell_from_edge(cell, edge) != nullptr)
+                ++count;
+        return count;
     }
 } // namespace
 
@@ -297,7 +317,6 @@ mapgen::voronoi::DiagramData mapgen::voronoi::converter::extract_data(const jcv_
 {
     DiagramData data;
 
-
     auto site_data = extract_site_data(jcv_diagram);
     for (auto& site : site_data)
         data.Cells.emplace_back(create_cell(*site, data));
@@ -306,6 +325,8 @@ mapgen::voronoi::DiagramData mapgen::voronoi::converter::extract_data(const jcv_
     for (const auto& point : data.Points)
         if (point->Edges.size() < 2)
             assert(point->Edges.size() >= 2);
+
+    std::vector<int> missing_neighbors;
     for (const auto& cell : data.Cells)
         if (cell->Edges.size() != cell->Points.size())
             assert(cell->Edges.size() == cell->Points.size());
